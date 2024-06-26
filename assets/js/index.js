@@ -196,6 +196,9 @@ var vm = new Vue({
       return ['apk', 'ipa'].indexOf(getExtention(name)) !== -1;
     },
     genFileClass: function (f) {
+      if (f.type == "symlink") {
+        return "fa-link";
+      }
       if (f.type == "dir") {
         if (f.name == '.git') {
           return 'fa-git-square';

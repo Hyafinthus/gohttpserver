@@ -614,7 +614,21 @@ func (s *HTTPStaticServer) hJSONList(w http.ResponseWriter, r *http.Request) {
 			}
 			lr.Name = filepath.ToSlash(name) // fix for windows
 		}
-		if info.IsDir() {
+		
+		// if info.IsDir() {
+		// 	name := deepPath(realPath, info.Name())
+		// 	lr.Name = name
+		// 	lr.Path = filepath.Join(filepath.Dir(path), name)
+		// 	lr.Type = "dir"
+		// 	lr.Size = s.historyDirSize(lr.Path)
+		// } else {
+		// 	lr.Type = "file"
+		// 	lr.Size = info.Size() // formatSize(info)
+		// }
+		if info.Mode()&os.ModeSymlink != 0 {
+			lr.Type = "symlink"
+			lr.Size = info.Size()
+		}  else if info.IsDir() {
 			name := deepPath(realPath, info.Name())
 			lr.Name = name
 			lr.Path = filepath.Join(filepath.Dir(path), name)
@@ -624,6 +638,7 @@ func (s *HTTPStaticServer) hJSONList(w http.ResponseWriter, r *http.Request) {
 			lr.Type = "file"
 			lr.Size = info.Size() // formatSize(info)
 		}
+
 		lrs = append(lrs, lr)
 	}
 
